@@ -69,7 +69,6 @@ void AtorchDL24::dump_config() {
   LOG_SENSOR(" ", "Capacity", this->capacity_sensor_);
   LOG_SENSOR(" ", "Energy", this->energy_sensor_);
   LOG_SENSOR(" ", "Temperature", this->temperature_sensor_);
-  LOG_SENSOR(" ", "External Temperature", this->external_temperature_sensor_);
   LOG_SENSOR(" ", "Dim Backlight", this->dim_backlight_sensor_);
   LOG_SENSOR(" ", "Running", this->running_sensor_);
   LOG_BINARY_SENSOR(" ", "Running", this->running_binary_sensor_);
@@ -97,7 +96,6 @@ void AtorchDL24::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t g
       this->publish_state_(this->capacity_sensor_, NAN);
       this->publish_state_(this->energy_sensor_, NAN);
       this->publish_state_(this->temperature_sensor_, NAN);
-      this->publish_state_(this->external_temperature_sensor_, NAN);
       this->publish_state_(this->dim_backlight_sensor_, NAN);
       this->publish_state_(this->running_sensor_, NAN);
       this->publish_state_(this->runtime_sensor_, NAN);
@@ -326,9 +324,6 @@ void AtorchDL24::decode_ac_and_dc_(const uint8_t *data, uint16_t length) {
   // 0x00 0x25:            Temperature            37 °C
   this->publish_state_(this->temperature_sensor_, (float) dl24_get_16bit(24));
 
-  // 0x00 0x25:            External Temperature   37 °C Mocked
-  this->publish_state_(this->external_temperature_sensor_, (float) dl24_get_16bit(24));
-
   // 0x00 0x02:            Hour                   2 h
   // 0x21:                 Minute                 33 min
   // 0x1F:                 Second                 31 sec
@@ -396,9 +391,6 @@ void AtorchDL24::decode_usb_(const uint8_t *data, uint16_t length) {
 
   // 0x00 0x00 0x00:       Temperature
   this->publish_state_(this->temperature_sensor_, (float) dl24_get_24bit(21));
-
-  // 0x00 0x00 0x00:       External Temperature Mocked
-  this->publish_state_(this->external_temperature_sensor_, (float) dl24_get_24bit(21));
 
   // 0x12 0x2E:            Hour                   4654 h
   // 0x33:                 Minute                 51 min
